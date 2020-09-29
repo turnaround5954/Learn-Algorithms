@@ -1,0 +1,113 @@
+  /**
+   * helper function for getting seam. use left-right order.
+   */
+  private int[] findSeam(int width, int height) {
+
+    // number of vertices
+    int numV = width * height + 2;
+
+    // distTo[0] = 0, distTo[width * height + 1] = length of s-t
+    double[] distTo = new double[numV];
+
+    // predecessor
+    int[] prevTo = new int[numV];
+
+    // initialize distTo
+    for (int v = height + 1; v < numV; v++) {
+      distTo[v] = Double.POSITIVE_INFINITY;
+    }
+
+    for (int v = 1; v <= height; v++) {
+      distTo[v] = energy[decodeCol(v, height)][decodeRow(v, height)];
+      prevTo[v] = 0;
+    }
+
+    distTo[0] = 0.0;
+
+    // topological order
+    int dest = numV - 1;
+    for (int v = 1; v < dest; v++) {
+
+      // get col and row
+      int col = decodeCol(v, height);
+      int row = decodeRow(v, height);
+
+      int x = col + 1;
+
+      // reach bottom
+      if (x >= width) {
+        break;
+      }
+
+      // relax (x - 1, y + 1)
+      int y = row - 1;
+      int idx = encode(x, y, height);
+
+      // deal with border case
+      if (y >= 0) {
+        double distRelax = distTo[v] + energy[x][y];
+        if (distTo[idx] > distRelax) {
+          distTo[idx] = distRelax;
+          prevTo[idx] = v;
+        }
+      }
+
+      // relax (x + 1, y + 1)
+      y += 2;
+      idx += 2;
+      if (y < height) {
+        double distRelax = distTo[v] + energy[x][y];
+        if (distTo[idx] > distRelax) {
+          distTo[idx] = distRelax;
+          prevTo[idx] = v;
+        }
+      }
+
+      // relax (x, y + 1)
+      y--;
+      idx--;
+      double distRelax = distTo[v] + energy[x][y];
+      if (distTo[idx] > distRelax) {
+        distTo[idx] = distRelax;
+        prevTo[idx] = v;
+      }
+    }
+
+    // get shortest path
+    for (int v = numV - height - 1; v < dest; v++) {
+      if (distTo[dest] > distTo[v]) {
+        distTo[dest] = distTo[v];
+        prevTo[dest] = v;
+      }
+    }
+
+    // return shortest path
+    int[] shortestPath = new int[width];
+    int v = dest;
+    for (int i = width - 1; i >= 0; i--) {
+      v = prevTo[v];
+      shortestPath[i] = decodeRow(v, height);
+    }
+    return shortestPath;
+  }
+
+  /**
+   * encode index. source: array[0], destination: array[col * row + 1].
+   */
+  private int encode(int col, int row, int height) {
+    return row + col * height + 1;
+  }
+
+  /**
+   * decode row index. source: array[0], destination: array[col * row + 1].
+   */
+  private int decodeRow(int idx, int height) {
+    return (idx - 1) % height;
+  }
+
+  /**
+   * decode column index.
+   */
+  private int decodeCol(int idx, int height) {
+    return (idx - 1) / height;
+  }
