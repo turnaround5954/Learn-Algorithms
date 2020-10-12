@@ -11,7 +11,7 @@ public class PercolationStats {
 	private boolean calculatedMean;
 	private boolean calculatedStd;
 	private double mean;
-  private double stddev;
+	private double stddev;
 
 	// perform trials independent experiments on an n-by-n grid
 	public PercolationStats(int n, int trials) {
