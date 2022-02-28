@@ -1,4 +1,4 @@
-# Homework-Algorithms
+# Learn-Algorithms
 
 My solutions to Algorithms I & II on coursera (score: 100/100). <br>
 ( ╯▽╰) The project structure is a bit messy. <br>
